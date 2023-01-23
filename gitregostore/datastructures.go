@@ -122,7 +122,7 @@ func InitGitRegoStore(baseUrl string, owner string, repository string, path stri
 	}()
 	gs := newGitRegoStore(baseUrl, owner, repository, path, tag, branch, frequency)
 	gs.setURL()
-	gs.setObjects()
+	_ = gs.setObjects()
 	return gs
 }
 

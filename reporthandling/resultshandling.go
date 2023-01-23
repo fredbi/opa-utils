@@ -37,16 +37,16 @@ func GetUniqueResources(k8sResources []map[string]interface{}) []map[string]inte
 		workload := objectsenvelopes.NewObject(k8sResources[i])
 		if workload == nil { // remove none supported types
 			k8sResources = removeFromSlice(k8sResources, i)
-			lenK8sResources -= 1
-			i -= 1
+			lenK8sResources--
+			i--
 			continue
 		}
 		resourceID := workload.GetID()
 		if found := uniqueRuleResponses[resourceID]; found {
 			// resource found -> remove from slice
 			k8sResources = removeFromSlice(k8sResources, i)
-			lenK8sResources -= 1
-			i -= 1
+			lenK8sResources--
+			i--
 		} else {
 			uniqueRuleResponses[resourceID] = true
 		}

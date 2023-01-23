@@ -51,21 +51,24 @@ func (iter *AllListsIterator) HasNext() bool {
 func (iter *AllListsIterator) Next() string {
 	var item string
 	if iter.HasNext() {
-		if iter.failedIndex < len(iter.allLists.failed) {
+		switch {
+		case iter.failedIndex < len(iter.allLists.failed):
 			item = iter.allLists.failed[iter.failedIndex]
 			iter.failedIndex++
-		} else if iter.passIndex < len(iter.allLists.passed) {
+		case iter.passIndex < len(iter.allLists.passed):
 			item = iter.allLists.passed[iter.passIndex]
 			iter.passIndex++
-		} else if iter.skippedIndex < len(iter.allLists.skipped) {
+		case iter.skippedIndex < len(iter.allLists.skipped):
 			item = iter.allLists.skipped[iter.skippedIndex]
 			iter.skippedIndex++
-		} else if iter.otherIndex < len(iter.allLists.other) {
+		case iter.otherIndex < len(iter.allLists.other):
 			item = iter.allLists.other[iter.otherIndex]
 			iter.otherIndex++
 		}
+
 		iter.index++
 	}
+
 	return item
 }
 
@@ -118,11 +121,15 @@ func (all *AllLists) ToUniqueControls() {
 // ToUnique - Call this function only when setting the List
 func (all *AllLists) ToUniqueResources() {
 	all.toUniqueBase()
+	trimmed := all.failed
+
 	// remove failed from passed list
-	all.passed = trimUnique(all.passed, all.failed)
+	all.passed = trimUnique(all.passed, trimmed)
+
 	// remove failed, and passed from skipped list
-	trimmed := append(all.failed, all.passed...)
+	trimmed = append(trimmed, all.passed...)
 	all.skipped = trimUnique(all.skipped, trimmed)
+
 	// remove failed, passed and skipped from other list
 	trimmed = append(trimmed, all.skipped...)
 	all.other = trimUnique(all.other, trimmed)

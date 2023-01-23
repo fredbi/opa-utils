@@ -7,11 +7,15 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAttackTrackUnmarshal(t *testing.T) {
 	var obj AttackTrack
-	file, _ := os.ReadFile(filepath.Join("testdata", "attacktrack.json"))
-	err := json.Unmarshal([]byte(file), &obj)
-	assert.NoError(t, err)
+	file, err := os.ReadFile(filepath.Join("testdata", "attacktrack.json"))
+	require.NoError(t, err)
+
+	assert.NoError(t,
+		json.Unmarshal(file, &obj),
+	)
 }

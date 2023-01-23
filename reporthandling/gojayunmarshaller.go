@@ -11,22 +11,22 @@ import (
 
 */
 // UnmarshalJSONObject - File inside a pkg
-func (r *PostureReport) UnmarshalJSONObject(dec *gojay.Decoder, key string) (err error) {
+func (postureReport *PostureReport) UnmarshalJSONObject(dec *gojay.Decoder, key string) (err error) {
 
 	switch key {
 	case "customerGUID":
-		err = dec.String(&(r.CustomerGUID))
+		err = dec.String(&(postureReport.CustomerGUID))
 
 	case "clusterName":
-		err = dec.String(&(r.ClusterName))
+		err = dec.String(&(postureReport.ClusterName))
 
 	case "reportID":
-		err = dec.String(&(r.ReportID))
+		err = dec.String(&(postureReport.ReportID))
 	case "jobID":
-		err = dec.String(&(r.JobID))
+		err = dec.String(&(postureReport.JobID))
 	case "generationTime":
-		err = dec.Time(&(r.ReportGenerationTime), time.RFC3339)
-		r.ReportGenerationTime = r.ReportGenerationTime.Local()
+		err = dec.Time(&(postureReport.ReportGenerationTime), time.RFC3339)
+		postureReport.ReportGenerationTime = postureReport.ReportGenerationTime.Local()
 	}
 	return err
 
@@ -42,7 +42,7 @@ func (r *PostureReport) UnmarshalJSONObject(dec *gojay.Decoder, key string) (err
 // 	return nil
 // }
 
-func (file *PostureReport) NKeys() int {
+func (postureReport *PostureReport) NKeys() int {
 	return 0
 }
 

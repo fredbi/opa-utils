@@ -9,6 +9,7 @@ import (
 	"github.com/kubescape/opa-utils/reporthandling/results/v1/resourcesresults"
 	v2 "github.com/kubescape/opa-utils/reporthandling/v2"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestReplicaScore(t *testing.T) {
@@ -90,7 +91,7 @@ func TestEmptyFrameworV1kMock(t *testing.T) {
 		Name:           "empty",
 		ControlReports: []reporthandling.ControlReport{},
 	}}}
-	s.Calculate(report.FrameworkReports)
+	require.NoError(t, s.Calculate(report.FrameworkReports))
 	assert.Equal(t, float32(0.0), report.FrameworkReports[0].Score, "empty framework should have score equals 0")
 
 }

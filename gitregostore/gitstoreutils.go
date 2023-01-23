@@ -95,79 +95,85 @@ func (gs *GitRegoStore) setObjectsFromRepoOnce() error {
 		return fmt.Errorf("failed to unmarshal response body from '%s', reason: %s", gs.URL, err.Error())
 	}
 
-	//use a clone of the store for the update to avoid long lock time
+	// use a clone of the store for the update to avoid long lock time
 	gsClone := newGitRegoStore(gs.BaseUrl, gs.Owner, gs.Repository, gs.Path, gs.Tag, gs.Branch, gs.FrequencyPullFromGitMinutes)
 
 	// use only json files from relevant dirs
 	for _, path := range trees.TREE {
 		rawDataPath := "https://raw.githubusercontent.com/" + gsClone.Owner + "/" + gsClone.Repository + "/" + gsClone.Branch + "/" + path.PATH
 
-		if strings.HasPrefix(path.PATH, strings.Replace(rulesJsonFileName, ".json", "/", -1)) && strings.HasSuffix(path.PATH, ".json") && !strings.Contains(path.PATH, "/test/") {
+		switch {
+		case strings.HasPrefix(path.PATH, strings.ReplaceAll(rulesJsonFileName, ".json", "/")) && strings.HasSuffix(path.PATH, ".json") && !strings.Contains(path.PATH, "/test/"):
 			respStr, err := HttpGetter(gsClone.httpClient, rawDataPath)
 			if err != nil {
 				return err
 			}
-			if err := gsClone.setRulesWithRawRego(respStr, rawDataPath); err != nil {
+			if err = gsClone.setRulesWithRawRego(respStr, rawDataPath); err != nil {
 				zap.L().Debug("In setObjectsFromRepoOnce - failed to set rule %s\n", zap.String("path", rawDataPath))
 				return err
 			}
-		} else if strings.HasPrefix(path.PATH, strings.Replace(controlsJsonFileName, ".json", "/", -1)) && strings.HasSuffix(path.PATH, ".json") {
+		case strings.HasPrefix(path.PATH, strings.ReplaceAll(controlsJsonFileName, ".json", "/")) && strings.HasSuffix(path.PATH, ".json"):
 			respStr, err := HttpGetter(gs.httpClient, rawDataPath)
 			if err != nil {
 				return err
 			}
-			if err := gsClone.setControl(respStr); err != nil {
+			if err = gsClone.setControl(respStr); err != nil {
 				zap.L().Debug("In setObjectsFromRepoOnce - failed to set control %s\n", zap.String("path", rawDataPath))
 				return err
 			}
-		} else if strings.HasPrefix(path.PATH, strings.Replace(frameworksJsonFileName, ".json", "/", -1)) && strings.HasSuffix(path.PATH, ".json") {
+		case strings.HasPrefix(path.PATH, strings.ReplaceAll(frameworksJsonFileName, ".json", "/")) && strings.HasSuffix(path.PATH, ".json"):
 			respStr, err := HttpGetter(gs.httpClient, rawDataPath)
 			if err != nil {
 				return err
 			}
-			if err := gsClone.setFramework(respStr); err != nil {
+			if err = gsClone.setFramework(respStr); err != nil {
 				zap.L().Debug("In setObjectsFromRepoOnce - failed to set framework %s\n", zap.String("path", rawDataPath))
 				return err
 			}
-		} else if strings.HasPrefix(path.PATH, attackTracksPathPrefix+"/") && strings.HasSuffix(path.PATH, ".json") {
+		case strings.HasPrefix(path.PATH, attackTracksPathPrefix+"/") && strings.HasSuffix(path.PATH, ".json"):
 			respStr, err := HttpGetter(gs.httpClient, rawDataPath)
 			if err != nil {
 				return nil
 			}
-			if err := gsClone.setAttackTrack(respStr); err != nil {
+			if err = gsClone.setAttackTrack(respStr); err != nil {
 				zap.L().Debug("In setObjectsFromRepoOnce - failed to set attack track %s\n", zap.String("path", rawDataPath))
 				return nil
 			}
-		} else if strings.HasPrefix(path.PATH, defaultConfigInputsFileName) && strings.HasSuffix(path.PATH, ".json") {
+		case strings.HasPrefix(path.PATH, defaultConfigInputsFileName) && strings.HasSuffix(path.PATH, ".json"):
 			respStr, err := HttpGetter(gs.httpClient, rawDataPath)
 			if err != nil {
 				return err
 			}
-			if err := gsClone.setDefaultConfigInputs(respStr); err != nil {
+			if err = gsClone.setDefaultConfigInputs(respStr); err != nil {
 				zap.L().Debug("In setObjectsFromRepoOnce - failed to set DefaultConfigInputs %s\n", zap.String("path", rawDataPath))
 				return err
 			}
-		} else if strings.HasPrefix(path.PATH, systemPostureExceptionFileName+"/") && strings.HasSuffix(path.PATH, ".json") {
+		case strings.HasPrefix(path.PATH, systemPostureExceptionFileName+"/") && strings.HasSuffix(path.PATH, ".json"):
 			respStr, err := HttpGetter(gs.httpClient, rawDataPath)
 			if err != nil {
 				return err
 			}
-			if err := gsClone.setSystemPostureExceptionPolicy(respStr); err != nil {
+			if err = gsClone.setSystemPostureExceptionPolicy(respStr); err != nil {
 				zap.L().Debug("In setObjectsFromRepoOnce - failed to set setSystemPostureExceptionPolicy %s\n", zap.String("path", rawDataPath))
 				return err
 			}
-		} else if strings.HasSuffix(path.PATH, ControlRuleRelationsFileName) {
+		case strings.HasSuffix(path.PATH, ControlRuleRelationsFileName):
 			respStr, err := HttpGetter(gs.httpClient, rawDataPath)
 			if err != nil {
 				return err
 			}
-			gsClone.setControlRuleRelations(respStr)
-		} else if strings.HasSuffix(path.PATH, frameworkControlRelationsFileName) {
+			if err = gsClone.setControlRuleRelations(respStr); err != nil {
+				return err
+			}
+		case strings.HasSuffix(path.PATH, frameworkControlRelationsFileName):
 			respStr, err := HttpGetter(gs.httpClient, rawDataPath)
 			if err != nil {
 				return err
 			}
-			gsClone.setFrameworkControlRelations(respStr)
+
+			if err = gsClone.setFrameworkControlRelations(respStr); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -507,5 +513,6 @@ func isControlID(c string) bool {
 		controlIDRegexCompiled = regexp.MustCompile(controlIDRegex)
 	})
 
+	// Match
 	return controlIDRegexCompiled.MatchString(c)
 }

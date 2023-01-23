@@ -11,24 +11,24 @@ import (
 
 */
 // UnmarshalJSONObject - File inside a pkg
-func (r *PostureReport) UnmarshalJSONObject(dec *gojay.Decoder, key string) (err error) {
+func (postureReport *PostureReport) UnmarshalJSONObject(dec *gojay.Decoder, key string) (err error) {
 
 	switch key {
 	case "customerGUID":
-		err = dec.String(&(r.CustomerGUID))
+		err = dec.String(&(postureReport.CustomerGUID))
 
 	case "clusterName":
-		err = dec.String(&(r.ClusterName))
+		err = dec.String(&(postureReport.ClusterName))
 
 	case "reportGUID":
-		err = dec.String(&(r.ReportID))
+		err = dec.String(&(postureReport.ReportID))
 	case "jobID":
-		err = dec.String(&(r.JobID))
+		err = dec.String(&(postureReport.JobID))
 	case "generationTime":
-		err = dec.Time(&(r.ReportGenerationTime), time.RFC3339)
-		r.ReportGenerationTime = r.ReportGenerationTime.Local()
+		err = dec.Time(&(postureReport.ReportGenerationTime), time.RFC3339)
+		postureReport.ReportGenerationTime = postureReport.ReportGenerationTime.Local()
 	case "metadata":
-		err = dec.Object(&(r.Metadata))
+		err = dec.Object(&(postureReport.Metadata))
 	}
 	return err
 
@@ -44,7 +44,7 @@ func (r *PostureReport) UnmarshalJSONObject(dec *gojay.Decoder, key string) (err
 // 	return nil
 // }
 
-func (file *PostureReport) NKeys() int {
+func (postureReport *PostureReport) NKeys() int {
 	return 0
 }
 
@@ -62,7 +62,7 @@ func (m *Metadata) UnmarshalJSONObject(dec *gojay.Decoder, key string) (err erro
 
 }
 
-func (file *Metadata) NKeys() int {
+func (m *Metadata) NKeys() int {
 	return 0
 }
 
@@ -101,7 +101,7 @@ func (m *ScanMetadata) UnmarshalJSONObject(dec *gojay.Decoder, key string) (err 
 
 }
 
-func (file *ScanMetadata) NKeys() int {
+func (m *ScanMetadata) NKeys() int {
 	return 0
 }
 
@@ -110,13 +110,13 @@ func (m *ClusterMetadata) UnmarshalJSONObject(dec *gojay.Decoder, key string) (e
 
 	switch key {
 
-	case "numberOfWorkerNodes": //int
+	case "numberOfWorkerNodes": // int
 		err = dec.Int(&(m.NumberOfWorkerNodes))
 
-	case "cloudProvider": //string
+	case "cloudProvider": // string
 		err = dec.String(&(m.CloudProvider))
 
-	case "contextName": //string
+	case "contextName": // string
 		err = dec.String(&(m.ContextName))
 
 	}
@@ -124,6 +124,6 @@ func (m *ClusterMetadata) UnmarshalJSONObject(dec *gojay.Decoder, key string) (e
 
 }
 
-func (file *ClusterMetadata) NKeys() int {
+func (m *ClusterMetadata) NKeys() int {
 	return 0
 }

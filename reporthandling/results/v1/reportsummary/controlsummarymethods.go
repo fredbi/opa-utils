@@ -150,7 +150,7 @@ func (controlSummaries *ControlSummaries) GetControl(criteria ControlCriteria, v
 	switch criteria {
 	case EControlCriteriaID:
 		tmp, ok := (*controlSummaries)[value]
-		//avoid handling empty objects
+		// avoid handling empty objects
 		if !ok {
 			return nil
 		}
@@ -191,7 +191,7 @@ func (controlSummaries *ControlSummaries) NumberOfControls() ICounters {
 func (controlSummaries *ControlSummaries) ListResourcesIDs() *helpersv1.AllLists {
 	allList := &helpersv1.AllLists{}
 
-	//I've implemented it like this because i wanted to support future changes and access things only via interfaces
+	// I've implemented it like this because i wanted to support future changes and access things only via interfaces
 	ctrlIDsIter := controlSummaries.ListControlsIDs().All()
 	for ctrlIDsIter.HasNext() {
 		resourcesIDs := controlSummaries.GetControl(EControlCriteriaID, ctrlIDsIter.Next()).ListResourcesIDs()

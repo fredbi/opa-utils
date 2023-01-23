@@ -14,7 +14,7 @@ func (pr *PrioritizedResource) GetResourceID() string {
 
 // CalculateScore calculates resource score, which is a sum of its priority vectors scores
 func (pr *PrioritizedResource) CalculateScore() float64 {
-	var score float64 = 0
+	var score float64
 	for i := range pr.PriorityVector {
 		score += pr.PriorityVector[i].GetScore()
 	}
@@ -35,7 +35,7 @@ func (pr *PrioritizedResource) SetScore(score float64) {
 
 // CalculateSeverity calculates resource severity, which is the max severity of its priority vectors scores
 func (pr *PrioritizedResource) CalculateSeverity() int {
-	var severity int = 0
+	var severity int
 	for i := range pr.PriorityVector {
 		if pr.PriorityVector[i].GetSeverity() > severity {
 			severity = pr.PriorityVector[i].GetSeverity()

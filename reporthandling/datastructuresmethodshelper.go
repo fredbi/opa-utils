@@ -68,5 +68,5 @@ func percentage(big, small int) int {
 		}
 		return 0
 	}
-	return int(float64(float64(big-small)/float64(big)) * 100)
+	return int(float64(big-small) / float64(big) * 100.00)
 }

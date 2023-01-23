@@ -6,6 +6,7 @@ import (
 
 	"github.com/kubescape/k8s-interface/workloadinterface"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPostureReportWithK8SResource(t *testing.T) {
@@ -25,7 +26,7 @@ func TestPostureReportWithK8SResource(t *testing.T) {
 	}
 
 	report2 := PostureReport{}
-	json.Unmarshal(a, &report2)
+	require.NoError(t, json.Unmarshal(a, &report2))
 
 	id := report2.Resources[0].GetID()
 
@@ -57,7 +58,7 @@ func TestPostureReportWithExternalResource(t *testing.T) {
 	}
 
 	report2 := PostureReport{}
-	json.Unmarshal(a, &report2)
+	require.NoError(t, json.Unmarshal(a, &report2))
 
 	assert.Equal(t, expectedID, report2.Resources[0].GetID())
 }

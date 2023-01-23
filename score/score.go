@@ -41,7 +41,7 @@ var postureScore *ScoreUtil
 
 func (su *ScoreUtil) Calculate(frameworksReports []reporthandling.FrameworkReport) error {
 	for i := range frameworksReports {
-		su.CalculateFrameworkScore(&frameworksReports[i])
+		_ = su.CalculateFrameworkScore(&frameworksReports[i])
 	}
 
 	return nil
@@ -63,6 +63,7 @@ func (su *ScoreUtil) CalculateFrameworkScore(framework *reporthandling.Framework
 	}
 	if framework.WCSScore == 0 {
 		framework.Score = 0
+		//nolint:revive,stylecheck
 		return fmt.Errorf("unable to calculate score for framework %s due to bad wcs score\n", framework.Name)
 	}
 	framework.Score = (framework.Score * 100) / framework.WCSScore
@@ -118,11 +119,11 @@ func (*ScoreUtil) processWorkload(wl *workloadinterface.Workload, score float32,
 				}
 			*/
 
-			//TODO - replace marshal and unmarshal by map inspection look code above
+			// TODO - replace marshal and unmarshal by map inspection look code above
 			b, err := json.Marshal(v)
 			if err == nil {
 				dmnset := appsv1.DaemonSet{}
-				json.Unmarshal(b, &dmnset)
+				_ = json.Unmarshal(b, &dmnset)
 
 				if dmnset.Status.DesiredNumberScheduled > 0 {
 					score *= float32(dmnset.Status.DesiredNumberScheduled)
@@ -157,7 +158,7 @@ func (su *ScoreUtil) ControlScore(ctrlReport *reporthandling.ControlReport, fram
 	}
 	ctrlReport.Score *= ctrlReport.BaseScore
 
-	var wcsScore float32 = 0
+	var wcsScore float32
 	for i := range allResourcesIDS {
 		if allResourcesIDS, ok := su.resources[allResourcesIDS[i]]; ok {
 			wcsScore += su.GetScore(allResourcesIDS.GetObject())
@@ -169,13 +170,13 @@ func (su *ScoreUtil) ControlScore(ctrlReport *reporthandling.ControlReport, fram
 		wcsScore = ctrlReport.BaseScore
 	}
 
-	//x
+	// x
 	unormalizedScore := ctrlReport.Score
 	ctrlReport.ARMOImprovement = unormalizedScore * ctrlReport.ARMOImprovement
 	if wcsScore > 0 {
 		ctrlReport.Score = (ctrlReport.Score * 100) / wcsScore
 	} else {
-		//ctrlReport.Score = 0
+		// ctrlReport.Score = 0
 		zap.L().Error("worst case scenario was 0, meaning no resources input were given - score is not available(will appear as > 1)")
 	}
 	return wcsScore, unormalizedScore
@@ -209,6 +210,7 @@ func (su *ScoreUtil) CalculatePostureReportV2(report *v2.PostureReport) error {
 		if wcsFwork == 0 { // NOTE(fred): since this is a float32, perhaps we should use a tolerance here
 			report.SummaryDetails.Frameworks[i].Score = 0
 
+			//nolint:revive,stylecheck
 			return fmt.Errorf(
 				"unable to calculate score for framework %s due to bad wcs score\n",
 				report.SummaryDetails.Frameworks[i].GetName(),
@@ -279,12 +281,12 @@ func (su *ScoreUtil) ControlV2Score(ctrl reportsummary.IControlSummary, framewor
 	}
 
 	wcsScore *= ctrl.GetScoreFactor()
-	// //x
+	// x
 	// ctrlReport.ARMOImprovement = unormalizedScore * ctrlReport.ARMOImprovement
 	if wcsScore > 0 {
 		ctrlScore = (unormalizedScore * 100) / wcsScore
 	} else {
-		//ctrlReport.Score = 0
+		// ctrlReport.Score = 0
 		zap.L().Error("worst case scenario was 0, meaning no resources input were given - score is not available(will appear as > 1)")
 	}
 	return ctrlScore, unormalizedScore, wcsScore

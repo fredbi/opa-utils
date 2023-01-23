@@ -140,27 +140,27 @@ func (h *AttackTrackAllPathsHandler) allPathsDfs(allPaths [][]IAttackTrackStep, 
 	return allPaths
 }
 
-func (handler *AttackTrackAllPathsHandler) CalculateAllPaths() [][]IAttackTrackStep {
+func (h *AttackTrackAllPathsHandler) CalculateAllPaths() [][]IAttackTrackStep {
 	// calculate the adjacency matrix of the attack track and the in-degree and out-degree of each node
-	root := handler.attackTrack.GetData()
+	root := h.attackTrack.GetData()
 
 	for i := 0; i < root.Length(); i++ {
-		handler.calculateAdjacencyMatrixAndVerticesDegree(root, root.SubStepAt(i))
+		h.calculateAdjacencyMatrixAndVerticesDegree(root, root.SubStepAt(i))
 	}
 
 	allPaths := make([][]IAttackTrackStep, 0)
-	var currentPathIndex *int = new(int)
+	currentPathIndex := new(int)
 	*currentPathIndex = -1
-	iter := handler.attackTrack.Iterator()
+	iter := h.attackTrack.Iterator()
 	for iter.HasNext() {
 		step := iter.Next()
-		if !step.IsPartOfAttackTrackPath() || !handler.inDegreeZero[step.GetName()] {
+		if !step.IsPartOfAttackTrackPath() || !h.inDegreeZero[step.GetName()] {
 			continue
 		}
 
 		(*currentPathIndex)++
 		allPaths = append(allPaths, []IAttackTrackStep{})
-		allPaths = handler.allPathsDfs(allPaths, step, currentPathIndex)
+		allPaths = h.allPathsDfs(allPaths, step, currentPathIndex)
 
 		// If last DFS call added a new empty path remove it
 		if *currentPathIndex >= 0 && len(allPaths[*currentPathIndex]) == 0 {

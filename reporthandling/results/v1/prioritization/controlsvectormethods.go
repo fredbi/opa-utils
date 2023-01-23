@@ -149,8 +149,8 @@ func (iter *ControlsVectorIterator) NextControl() *PriorityVectorControl {
 }
 
 // A valid vector must have at least one control which is not a Security Impact-only Control
-func (v *ControlsVector) IsValid() bool {
-	iter := v.GetIterator().(*ControlsVectorIterator)
+func (cv *ControlsVector) IsValid() bool {
+	iter := cv.GetIterator().(*ControlsVectorIterator)
 	for iter.HasNext() {
 		control := iter.NextControl()
 		for _, tag := range control.Tags {

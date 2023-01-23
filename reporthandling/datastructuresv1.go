@@ -106,7 +106,7 @@ type Source struct {
 	RelativePath           string     `json:"relativePath,omitempty"`           // relative path from the repo base
 	FileType               string     `json:"fileType,omitempty"`               // file type
 	HelmChartName          string     `json:"helmChartName,omitempty"`          // helm chart name (if FileType is "Helm Chart")
-	KustomizeDirectoryName string     `json:"kustomizeDirectoryName,omitempty"` //Kustomize Directory name if File is from Kustomize Directory
+	KustomizeDirectoryName string     `json:"kustomizeDirectoryName,omitempty"` // Kustomize Directory name if File is from Kustomize Directory
 	LastCommit             LastCommit `json:"lastCommit,omitempty"`
 }
 

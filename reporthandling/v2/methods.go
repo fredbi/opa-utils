@@ -2,13 +2,14 @@ package v2
 
 import "encoding/json"
 
-func (pr *PostureReport) ToBytes() ([]byte, error) {
-	return json.Marshal(*pr)
+func (postureReport *PostureReport) ToBytes() ([]byte, error) {
+	return json.Marshal(*postureReport)
 }
 
-func (pr *PostureReport) ToString() string {
-	if bpr, err := pr.ToBytes(); err == nil {
+func (postureReport *PostureReport) ToString() string {
+	if bpr, err := postureReport.ToBytes(); err == nil {
 		return string(bpr)
 	}
+
 	return "{}"
 }

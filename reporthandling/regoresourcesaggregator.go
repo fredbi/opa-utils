@@ -3,6 +3,7 @@ package reporthandling
 import (
 	"bytes"
 	"encoding/gob"
+	"fmt"
 	"strings"
 
 	"github.com/kubescape/k8s-interface/k8sinterface"
@@ -31,36 +32,70 @@ func RegoResourcesAggregator(rule *PolicyRule, k8sObjects []workloadinterface.IM
 
 func AggregateResourcesBySubjects(k8sObjects []workloadinterface.IMetadata) ([]workloadinterface.IMetadata, error) {
 	aggregatedK8sObjects := []workloadinterface.IMetadata{}
+
 	for _, bindingWorkload := range k8sObjects {
-		if strings.HasSuffix(bindingWorkload.GetKind(), "Binding") { // types.Role
-			for _, roleWorkload := range k8sObjects {
-				if strings.HasSuffix(roleWorkload.GetKind(), "Role") {
-					bindingWorkloadObj := bindingWorkload.GetObject()
-					if kind, ok := workloadinterface.InspectMap(bindingWorkloadObj, "roleRef", "kind"); ok {
-						if name, ok := workloadinterface.InspectMap(bindingWorkloadObj, "roleRef", "name"); ok {
-							if kind.(string) == roleWorkload.GetKind() && name.(string) == roleWorkload.GetName() {
-								if subjects, ok := workloadinterface.InspectMap(bindingWorkloadObj, "subjects"); ok {
-									if data, ok := subjects.([]interface{}); ok {
-										for _, subject := range data {
-											// deep copy subject - don't change original subject in rolebinding
-											subjectCopy, err := DeepCopyMap(subject.(map[string]interface{}))
-											if err != nil {
-												return aggregatedK8sObjects, err
-											}
-											// subjectCopy["apiVersion"] = fmt.Sprintf("%s/%s", objectsenvelopes.RegoAttackVectorGroup, objectsenvelopes.RegoAttackVectorVersion)
-											subjectCopy[objectsenvelopes.RelatedObjectsKey] = []map[string]interface{}{bindingWorkload.GetObject(), roleWorkload.GetObject()}
-											newObj := objectsenvelopes.NewRegoResponseVectorObject(subjectCopy)
-											aggregatedK8sObjects = append(aggregatedK8sObjects, newObj)
-										}
-									}
-								}
-							}
-						}
-					}
+		if !strings.HasSuffix(bindingWorkload.GetKind(), "Binding") { // types.Role
+			continue
+		}
+
+		for _, roleWorkload := range k8sObjects {
+			if !strings.HasSuffix(roleWorkload.GetKind(), "Role") {
+				continue
+			}
+
+			bindingWorkloadObj := bindingWorkload.GetObject()
+			kindVal, isKindRoleRef := workloadinterface.InspectMap(bindingWorkloadObj, "roleRef", "kind")
+			if !isKindRoleRef {
+				continue
+			}
+
+			nameVal, isNameRoleRef := workloadinterface.InspectMap(bindingWorkloadObj, "roleRef", "name")
+			if !isNameRoleRef {
+				continue
+			}
+
+			kind, isString := kindVal.(string)
+			if !isString { // NOTE: now returns an error - used to panic
+				return nil, fmt.Errorf("expected a Kind as string, but got %T", kindVal)
+			}
+
+			name, isString := nameVal.(string)
+			if !isString { // NOTE: now returns an error - used to panic
+				return nil, fmt.Errorf("expected a Kind as string, but got %T", kindVal)
+			}
+
+			if kind != roleWorkload.GetKind() || name != roleWorkload.GetName() {
+				continue
+			}
+
+			subjects, isSubjects := workloadinterface.InspectMap(bindingWorkloadObj, "subjects")
+			if !isSubjects {
+				continue
+			}
+
+			data, isInterfaces := subjects.([]interface{})
+			if !isInterfaces {
+				continue
+			}
+
+			for _, subject := range data {
+				// deep copy subject - don't change original subject in rolebinding
+				subjectCopy, err := DeepCopyMap(subject.(map[string]interface{}))
+				if err != nil {
+					return aggregatedK8sObjects, err
 				}
+
+				// subjectCopy["apiVersion"] = fmt.Sprintf("%s/%s", objectsenvelopes.RegoAttackVectorGroup, objectsenvelopes.RegoAttackVectorVersion)
+				subjectCopy[objectsenvelopes.RelatedObjectsKey] = []map[string]interface{}{
+					bindingWorkload.GetObject(),
+					roleWorkload.GetObject(),
+				}
+				newObj := objectsenvelopes.NewRegoResponseVectorObject(subjectCopy)
+				aggregatedK8sObjects = append(aggregatedK8sObjects, newObj)
 			}
 		}
 	}
+
 	return aggregatedK8sObjects, nil
 }
 

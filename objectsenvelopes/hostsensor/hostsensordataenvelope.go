@@ -75,7 +75,10 @@ func (hsde *HostSensorDataEnvelope) SetApiVersion(apiVersion string) {
 	hsde.ApiVersion = apiVersion
 }
 
-func (hsde *HostSensorDataEnvelope) SetWorkload(object map[string]interface{}) { //deprecated
+// SetWorkload ...
+//
+// Deprecated:
+func (hsde *HostSensorDataEnvelope) SetWorkload(object map[string]interface{}) {
 	hsde.SetObject(object)
 }
 

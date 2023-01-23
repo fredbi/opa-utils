@@ -136,7 +136,7 @@ func (gs *GitRegoStore) GetOPAControlByFrameworkNameAndControlName(frameworkName
 	gs.controlsLock.RLock()
 	defer gs.controlsLock.RUnlock()
 
-	fw, err := gs.getOPAFrameworkByName(frameworkName) // locks framework
+	fw, err := gs.GetOPAFrameworkByName(frameworkName)
 	if err != nil {
 		return nil, err
 	}

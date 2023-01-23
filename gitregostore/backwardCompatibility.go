@@ -136,7 +136,7 @@ const (
 )
 
 // reverseMap - get a map[string]string typed struct and invert key and values.
-func reverseMap(in map[string]string) map[string]string {
+func reverseMap(_ map[string]string) map[string]string {
 
 	n := make(map[string]string, len(oldControlIdsMapping))
 	for k, v := range oldControlIdsMapping {
@@ -173,7 +173,7 @@ func newFrameworkName(frameworkName string) string {
 func baseControlName(controlID string, controlName string) string {
 
 	if oldControlID, exist := invertedOldControlIdsMapping[strings.ToUpper(controlID)]; exist {
-		return strings.Replace(controlName, strings.ToUpper(oldControlID)+" ", "", -1)
+		return strings.ReplaceAll(controlName, strings.ToUpper(oldControlID)+" ", "")
 	}
 
 	return controlName

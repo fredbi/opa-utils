@@ -21,7 +21,7 @@ type IBasicPostureReport interface {
 	GetJobID() string
 	GetTimestamp() *time.Time
 
-	//todo GetISummaryDetails
+	// todo GetISummaryDetails
 }
 
 type IFrameworkSummary interface {

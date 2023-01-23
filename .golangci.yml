@@ -22,20 +22,11 @@ linters:
     - goimports
     - ineffassign
     - gosimple
-  disable:
     # temporarily disabled
-    - varcheck
-    - errcheck
-    - dupl
-    - gocritic
-    - gocognit
-    - nakedret
-    - revive
-    - stylecheck
-    - unconvert
-    - unparam
     #- forbidigo # <- see later
+  disable:
     # should remain disabled
+    - varcheck   # deprecated linter
     - deadcode   # deprecated linter
     - maligned
     - lll
