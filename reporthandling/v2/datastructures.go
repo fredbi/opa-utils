@@ -1,15 +1,47 @@
-package v2
+package reporthandling
 
 import (
 	"time"
 
 	armoapi "github.com/armosec/armoapi-go/apis"
-	"github.com/kubescape/opa-utils/reporthandling"
 	"github.com/kubescape/opa-utils/reporthandling/apis"
 	"github.com/kubescape/opa-utils/reporthandling/results/v1/reportsummary"
 	"github.com/kubescape/opa-utils/reporthandling/results/v1/resourcesresults"
+	modelv1 "github.com/kubescape/opa-utils/reporthandling/v1"
 
 	"k8s.io/apimachinery/pkg/version"
+)
+
+type (
+	// Types inherited from reporthandling models v1.
+
+	AttackTrackCategories = modelv1.AttackTrackCategories
+
+	// Control represents a collection of rules which are combined together to single purpose
+	Control = modelv1.Control
+
+	ControlConfigInputs = modelv1.ControlConfigInputs
+
+	// Framework represents a collection of controls which are combined together to expose comprehensive behavior
+	Framework = modelv1.Framework
+
+	FrameworkSubSection = modelv1.FrameworkSubSection
+
+	// LastCommit represent the git metadata of a file at its last commit.
+	LastCommit = modelv1.LastCommit
+
+	// PolicyRule represents single rule, the fundamental executable block of policy.
+	PolicyRule = modelv1.PolicyRule
+
+	// Resource represents a kubernetes resource.
+	Resource = modelv1.Resource
+
+	RuleDependency = modelv1.RuleDependency
+
+	// RuleMatchObjects defines which objects this rule applied on
+	RuleMatchObjects = modelv1.RuleMatchObjects
+
+	UpdatedControl = modelv1.UpdatedControl
 )
 
 // PostureReport posture scanning report structure
@@ -22,7 +54,7 @@ type PostureReport struct {
 	ClusterCloudProvider string                            `json:"clusterCloudProvider"`
 	ReportID             string                            `json:"reportGUID"`
 	JobID                string                            `json:"jobID"`
-	Resources            []reporthandling.Resource         `json:"resources,omitempty"`
+	Resources            []Resource                        `json:"resources,omitempty"`
 	Attributes           []reportsummary.PostureAttributes `json:"attributes"`
 	Results              []resourcesresults.Result         `json:"results,omitempty"`
 	SummaryDetails       reportsummary.SummaryDetails      `json:"summaryDetails,omitempty"`
@@ -37,7 +69,7 @@ type ClusterMetadata struct {
 	NumberOfWorkerNodes             int            `json:"numberOfWorkerNodes,omitempty"`
 }
 
-// CloudMetadata metadata of the cloud the cluster is running on. Compatible with the reporthandling.ICloudMetadata interface
+// CloudMetadata metadata of the cloud the cluster is running on. Compatible with the reporthandling/v1.ICloudMetadata interface
 type CloudMetadata struct {
 	CloudProvider apis.CloudProviderName `json:"cloudProvider,omitempty"`
 	ShortName     string                 `json:"shortName,omitempty"`
@@ -46,14 +78,14 @@ type CloudMetadata struct {
 }
 
 type RepoContextMetadata struct {
-	Provider      string                    `json:"provider,omitempty"` // repo provider name. e.g. github, gitlab
-	Repo          string                    `json:"repo,omitempty"`
-	Owner         string                    `json:"owner,omitempty"`
-	Branch        string                    `json:"branch,omitempty"`
-	DefaultBranch string                    `json:"defaultBranch,omitempty"`
-	RemoteURL     string                    `json:"remoteURL,omitempty"`
-	LastCommit    reporthandling.LastCommit `json:"lastCommit,omitempty"`
-	LocalRootPath string                    `json:"localRootPath,omitempty"` // repo root path (local)
+	Provider      string     `json:"provider,omitempty"` // repo provider name. e.g. github, gitlab
+	Repo          string     `json:"repo,omitempty"`
+	Owner         string     `json:"owner,omitempty"`
+	Branch        string     `json:"branch,omitempty"`
+	DefaultBranch string     `json:"defaultBranch,omitempty"`
+	RemoteURL     string     `json:"remoteURL,omitempty"`
+	LastCommit    LastCommit `json:"lastCommit,omitempty"`
+	LocalRootPath string     `json:"localRootPath,omitempty"` // repo root path (local)
 }
 
 type FileContextMetadata struct {
@@ -82,16 +114,6 @@ type Metadata struct {
 	ScanMetadata    ScanMetadata    `json:"scanMetadata,omitempty"`
 }
 
-type ScanningTarget uint16
-
-const (
-	Cluster   ScanningTarget = 0
-	File      ScanningTarget = 1
-	Repo      ScanningTarget = 2
-	GitLocal  ScanningTarget = 3
-	Directory ScanningTarget = 4
-)
-
 type ScanMetadata struct {
 	TargetType       string `json:"targetType,omitempty"`
 	KubescapeVersion string `json:"kubescapeVersion,omitempty"`
@@ -119,28 +141,4 @@ type ScanMetadata struct {
 	HostScanner        bool           `json:"hostScanner,omitempty"`
 	Submit             bool           `json:"submit,omitempty"`
 	VerboseMode        bool           `json:"verboseMode,omitempty"`
-}
-
-// Moved to apis/cloudmetadata.go
-// const (
-// 	GKE = "GKE"
-// 	GCP = "GCP"
-// 	EKS = "EKS"
-// )
-
-func (st *ScanningTarget) String() string {
-	switch *st {
-	case 0:
-		return "Cluster"
-	case 1:
-		return "File"
-	case 2:
-		return "Repo"
-	case 3:
-		return "GitLocal"
-	case 4:
-		return "Directory"
-	default:
-		return ""
-	}
 }

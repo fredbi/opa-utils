@@ -1,4 +1,4 @@
-package v2
+package reporthandling
 
 import (
 	"github.com/kubescape/k8s-interface/workloadinterface"

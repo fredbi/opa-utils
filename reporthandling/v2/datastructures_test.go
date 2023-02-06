@@ -1,4 +1,4 @@
-package v2
+package reporthandling
 
 import (
 	"bytes"
@@ -9,7 +9,6 @@ import (
 	"github.com/armosec/armoapi-go/armotypes"
 	"github.com/francoispqt/gojay"
 	"github.com/kubescape/opa-utils/objectsenvelopes"
-	"github.com/kubescape/opa-utils/reporthandling"
 	"github.com/kubescape/opa-utils/reporthandling/results/v1/reportsummary"
 	"github.com/kubescape/opa-utils/reporthandling/results/v1/resourcesresults"
 	"github.com/stretchr/testify/assert"
@@ -17,7 +16,7 @@ import (
 
 func GetPostureReportMock() *PostureReport {
 
-	resource := []reporthandling.Resource{}
+	resource := []Resource{}
 	err := json.Unmarshal([]byte(ResourcesListMock), &resource)
 	if err != nil {
 		panic(err)

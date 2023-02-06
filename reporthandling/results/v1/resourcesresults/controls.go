@@ -1,9 +1,9 @@
 package resourcesresults
 
 import (
-	"github.com/kubescape/opa-utils/reporthandling"
 	"github.com/kubescape/opa-utils/reporthandling/apis"
 	helpersv1 "github.com/kubescape/opa-utils/reporthandling/helpers/v1"
+	"github.com/kubescape/opa-utils/reporthandling/v1"
 )
 
 // GetID get control ID

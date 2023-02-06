@@ -1,11 +1,11 @@
-package v2
+package reporthandling
 
 import (
 	"reflect"
 	"testing"
 
 	"github.com/kubescape/opa-utils/reporthandling/apis"
-	v1 "github.com/kubescape/opa-utils/reporthandling/helpers/v1"
+	helpersv1 "github.com/kubescape/opa-utils/reporthandling/helpers/v1"
 )
 
 func TestNewCloudMetadata(t *testing.T) {
@@ -20,7 +20,7 @@ func TestNewCloudMetadata(t *testing.T) {
 		{
 			name: "TestNewCloudMetadata - EKS",
 			args: args{
-				cloudParser: v1.NewEKSMetadata("arn:aws:eks:eu-west-1:id:cluster/my-cluster"),
+				cloudParser: helpersv1.NewEKSMetadata("arn:aws:eks:eu-west-1:id:cluster/my-cluster"),
 			},
 			want: &CloudMetadata{
 				CloudProvider: apis.EKS,
@@ -32,7 +32,7 @@ func TestNewCloudMetadata(t *testing.T) {
 		{
 			name: "TestNewCloudMetadata - GKE",
 			args: args{
-				cloudParser: v1.NewGKEMetadata("gke_project_zone_my-cluster"),
+				cloudParser: helpersv1.NewGKEMetadata("gke_project_zone_my-cluster"),
 			},
 			want: &CloudMetadata{
 				CloudProvider: apis.GKE,

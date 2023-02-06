@@ -6,8 +6,8 @@ import (
 
 	_ "embed"
 
-	"github.com/kubescape/opa-utils/reporthandling"
 	"github.com/kubescape/opa-utils/reporthandling/apis"
+	"github.com/kubescape/opa-utils/reporthandling/v1"
 	"github.com/stretchr/testify/assert"
 )
 

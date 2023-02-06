@@ -2,9 +2,9 @@ package resourcesresults
 
 import (
 	"github.com/armosec/armoapi-go/armotypes"
-	"github.com/kubescape/opa-utils/reporthandling"
 	"github.com/kubescape/opa-utils/reporthandling/apis"
 	"github.com/kubescape/opa-utils/reporthandling/results/v1/prioritization"
+	"github.com/kubescape/opa-utils/reporthandling/v1"
 )
 
 // Result - resource result resourceID and the controls that where tested against the resource, along with the raw resource and prioritization information
